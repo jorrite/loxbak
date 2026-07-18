@@ -1,0 +1,140 @@
+@import "tailwindcss";
+
+/*
+ * Tier 1: raw brand tokens, sampled directly from loxone.com's own shipped
+ * stylesheet (aurora.loxone.com design tokens) rather than secondary
+ * brand-manual sources, which turned out not to match what the site
+ * actually ships. Dark-theme values specifically (this app is dark-only):
+ *   --token-color-background-bg-app-canvas: #171717
+ *   --token-color-foreground-fg-ui:         #e7e5e4
+ *   --token-color-foreground-fg-ui-brand:   #8cff70
+ *   --token-color-foreground-fg-ui-brand (light theme, deeper): #34ce08
+ *   --token-color-foreground-fg-onbrand:    #000000
+ */
+@theme {
+  --color-loxone-green: #8cff70;
+  --color-loxone-green-deep: #34ce08;
+  --color-loxone-canvas: #171717;
+  --color-loxone-grey: #737373;
+  /* Not from Loxone's brand palette — a dedicated UI-only accent for
+     retention/"keep N" values, given as exact RGB by the user. */
+  --color-retention-orange: #ee8445;
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Tailwind's default --radius-sm is 4px; this app uses a tighter 2px
+     throughout (buttons, panels, table cells). Overriding the token here
+     instead of every `rounded-sm` call site. */
+  --radius-sm: 2px;
+}
+
+/* Tier 2: semantic tokens, themeable via data-theme on <html> */
+:root,
+[data-theme="dark"] {
+  /*
+   * Two tones only, not three: page background, the nav sidebar, and every
+   * table/card surface are all literally the same color — separation comes
+   * from borders (a line-drawn, mostly-unfilled look), not from a filled
+   * elevation step. --surface-overlay (table/panel headers) is the one
+   * deliberately different shade.
+   */
+  --surface-default: var(--color-loxone-canvas);
+  --surface-raised: var(--color-loxone-canvas);
+  --surface-overlay: #202020;
+  --surface-accent: var(--color-loxone-green);
+
+  --content-default: #e7e5e4;
+  --content-secondary: #a3a3a3;
+  --content-muted: var(--color-loxone-grey);
+  --content-accent: var(--color-loxone-green);
+  --content-on-accent: #000000;
+
+  /* border-default is the one used for actual grid lines (table cells,
+     panel frames) — needs to actually read as a line, not disappear. */
+  --border-default: color-mix(in srgb, var(--color-loxone-grey) 45%, transparent);
+  --border-subtle: color-mix(in srgb, var(--color-loxone-grey) 18%, transparent);
+  --border-accent: var(--color-loxone-green);
+
+  --status-success: var(--color-loxone-green);
+  --status-neutral: var(--color-loxone-grey);
+  --status-error: #f5525f;
+  --status-retention: var(--color-retention-orange);
+
+  /*
+   * Colored-button formula: background is a dark, desaturated tint of the
+   * accent hue (two separate tokens tuned independently — a dark
+   * "bg-accent" pairing), text is the bright saturated accent. The border
+   * is a near-invisible full-perimeter hairline in the text's own color,
+   * not a visible colored border and not bottom-only. Mixed in oklch so
+   * the tint math is perceptually correct.
+   */
+  --button-accent-bg: color-mix(in oklch, var(--color-loxone-green) 22%, var(--color-loxone-canvas));
+  --button-accent-bg-hover: color-mix(in oklch, var(--color-loxone-green) 32%, var(--color-loxone-canvas));
+  --button-danger-bg: color-mix(in oklch, var(--status-error) 22%, var(--color-loxone-canvas));
+  --button-danger-bg-hover: color-mix(in oklch, var(--status-error) 32%, var(--color-loxone-canvas));
+}
+
+/* Semantic tokens exposed as Tailwind utilities: bg-surface-default, text-content-accent, border-border-default, etc. */
+@theme inline {
+  --color-surface-default: var(--surface-default);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-surface-accent: var(--surface-accent);
+
+  --color-content-default: var(--content-default);
+  --color-content-secondary: var(--content-secondary);
+  --color-content-muted: var(--content-muted);
+  --color-content-accent: var(--content-accent);
+  --color-content-on-accent: var(--content-on-accent);
+
+  --color-border-default: var(--border-default);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-accent: var(--border-accent);
+
+  --color-status-success: var(--status-success);
+  --color-status-neutral: var(--status-neutral);
+  --color-status-error: var(--status-error);
+  --color-status-retention: var(--status-retention);
+}
+
+/*
+ * Mono type scale. Uppercase is baked into the mono utilities themselves —
+ * "mono" and "uppercase" aren't independent choices here, they're the same
+ * rule. text-mono-sm (12px) is what Button uses; text-mono-xs (11px) is the
+ * smaller chrome/label size (badges, table headers). Both share the same
+ * 0.04rem (0.64px) letter-spacing.
+ */
+@utility text-mono-xs {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  line-height: 1rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04rem;
+  text-transform: uppercase;
+}
+
+@utility text-mono-sm {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  line-height: 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04rem;
+  text-transform: uppercase;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--surface-default);
+  color: var(--content-default);
+}
+
+/* Same formula as buttons: full-strength accent for the text, a dark tint
+   of it for the background — not a solid fill. */
+::selection {
+  background: var(--button-accent-bg);
+  color: var(--content-accent);
+}

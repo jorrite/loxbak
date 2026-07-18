@@ -1,0 +1,18 @@
+# backend build output
+/bin/
+/internal/web/static/*
+!/internal/web/static/index.html
+
+# sqlite + local dev data
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+/.data/
+
+# env
+.env
+.env.local
+
+# OS
+.DS_Store
