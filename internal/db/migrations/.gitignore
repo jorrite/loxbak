@@ -1,0 +1,5 @@
+# Schema migrations are source, not scratch output — re-include them here
+# since a contributor's global gitignore (a blanket `*.sql` rule is a common
+# one) would otherwise silently exclude every file in this directory from
+# version control without any error or warning.
+!*.sql
